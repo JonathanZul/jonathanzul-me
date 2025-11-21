@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Github, Linkedin, FileText } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export function Footer() {
   return (
@@ -36,5 +37,3 @@ export function Footer() {
     </footer>
   )
 }
-
-import { Button } from "@/components/ui/button"
