@@ -1,103 +1,118 @@
-import Image from "next/image";
+import Link from "next/link"
+import { db } from "@/lib/db"
+import { Button } from "@/components/ui/button"
+import { ProjectCard } from "@/components/project-card"
+import { ArrowRight, Download } from "lucide-react"
 
-export default function Home() {
+// This function fetches data directly on the server
+async function getFeaturedProjects() {
+  const projects = await db.project.findMany({
+    take: 3, // Only fetch the top 3
+    orderBy: {
+      createdAt: 'desc', // Newest first
+    },
+    include: {
+      technologies: {
+        include: {
+          technology: true,
+        },
+      },
+    },
+  })
+  return projects
+}
+
+export default async function Home() {
+  const projects = await getFeaturedProjects()
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex flex-col min-h-screen">
+      {/* HERO SECTION */}
+      <section className="relative py-20 md:py-32 overflow-hidden">
+        <div className="container px-4 md:px-6">
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-8 items-center">
+            <div className="flex flex-col justify-center space-y-8">
+              <div className="space-y-4">
+                <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none font-serif text-foreground">
+                  Hi, I&apos;m Jonathan. <br />
+                  <span className="text-muted-foreground">Full-Stack Engineer.</span>
+                </h1>
+                <p className="max-w-[600px] text-lg text-muted-foreground md:text-xl leading-relaxed">
+                  I build accessible, scalable digital solutions with a focus on 
+                  machine learning and environmental impact. Currently bridging the gap 
+                  between complex data and human-centric experiences.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/projects">
+                  <Button size="lg" className="w-full sm:w-auto gap-2">
+                    View My Work <ArrowRight className="w-4 h-4" />
+                  </Button>
+                </Link>
+                <Link href="/contact">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                    Contact Me
+                  </Button>
+                </Link>
+                {/* Optional Resume Button */}
+                <Link href="/resume.pdf" target="_blank"> 
+                    <Button variant="ghost" size="lg" className="w-full sm:w-auto gap-2">
+                         Download CV <Download className="w-4 h-4" />
+                    </Button>
+                </Link>
+              </div>
+            </div>
+            
+            {/* Visual / Image Area */}
+            <div className="mx-auto lg:ml-auto flex justify-center items-center">
+               {/* 
+                  This is a stylistic placeholder. 
+                  In a real deployment, replace '/profile.jpg' with your actual photo.
+                  I've added a 'blob' shape effect using border-radius.
+               */}
+              <div className="relative w-72 h-72 sm:w-96 sm:h-96">
+                <div className="absolute inset-0 bg-gradient-to-tr from-green-100 to-blue-100 rounded-[2rem] rotate-6 opacity-60 blur-2xl dark:from-green-900 dark:to-blue-900" />
+                <div className="relative w-full h-full overflow-hidden rounded-[2rem] border-2 border-border bg-muted shadow-xl rotate-3 transition-transform hover:rotate-0 duration-500">
+                   {/* 
+                      Replace this src with your actual image URL. 
+                      Currently using a placeholder that looks professional.
+                   */}
+                  <img 
+                    alt="Jonathan Zul Luna"
+                    src="https://ui.shadcn.com/placeholder.svg" // Replace with your actual photo path
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </section>
+
+      {/* FEATURED PROJECTS SECTION */}
+      <section className="py-20 bg-slate-50 dark:bg-slate-900/20">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center mb-12">
+            <div className="space-y-1">
+              <h2 className="text-3xl font-bold tracking-tight font-serif">Featured Projects</h2>
+              <p className="text-muted-foreground">
+                A selection of my recent work in Full-Stack and AI.
+              </p>
+            </div>
+            <Link href="/projects">
+              <Button variant="ghost" className="gap-1">
+                View All Projects <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
-  );
+  )
 }
